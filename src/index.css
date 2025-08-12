@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .hover\\:shadow-glow {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .hover\\:shadow-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(135, 206, 235, 0.5); /* Sky blue glow */
+    }
+  }
