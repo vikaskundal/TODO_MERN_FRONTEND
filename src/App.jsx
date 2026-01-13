@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import axios from 'axios';
+import api from './utils/api';
 import { TodoList } from './component/Todolist'
 import GuestLimitModal from './component/GuestLimitModal';
 import SocialButtons from './component/SocialButtons';
@@ -32,11 +32,7 @@ function App() {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const response = await axios.post('http://localhost:8000/api/todos', newTodo,
-          {headers:{
-                Authorization: `Bearer ${token}`
-          }}
-        );
+        const response = await api.post('/api/todos', newTodo);
         const savedTodo = response.data;
         setTodos([...todos, savedTodo]);
       } catch (error) {
@@ -59,12 +55,7 @@ function App() {
     const token=localStorage.getItem('token');
     if (token) {
       try {
-        await axios.put(`http://localhost:8000/api/todos/${_id}`, { done: true},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }}
-        );
+        await api.put(`/api/todos/${_id}`);
         const updatedTodos = todos.map((todo => todo._id === _id ? { ...todo, done: true } : todo));
         setTodos(updatedTodos);
       } catch (error) {
@@ -82,13 +73,7 @@ function App() {
     const token=localStorage.getItem('token');
     if (token) {
       try {
-        await axios.delete(`http://localhost:8000/api/todos/${_id}`,
-          {
-            headers:{
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+        await api.delete(`/api/todos/${_id}`);
       const updatedTodos = todos.filter(todo => todo._id !== _id);
       setTodos(updatedTodos);
       } catch (error) {

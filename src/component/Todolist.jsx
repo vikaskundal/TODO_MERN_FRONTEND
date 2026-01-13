@@ -1,8 +1,9 @@
 import { Login } from "./Login";
 import { Signup } from "./Signup";
+import { ForgotPassword } from "./ForgotPassword";
 import { createTodo } from "./Todos";
 import GuestLimitModal from "./GuestLimitModal";
-import axios from "axios";
+import api from "../utils/api";
 import React, { useEffect, useState } from "react";
 
 export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos }) => {
@@ -13,7 +14,12 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
     const [isLoggedIn, setisLoggedIn] = useState(false);
     const [showlogin, setShowLogIn] = useState(false);
     const [showsignup, setShowSignUp] = useState(false);
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [showUserName, SetShowUserName] = useState('');
+    const [isEditingUsername, setIsEditingUsername] = useState(false);
+    const [editedUsername, setEditedUsername] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [isUpdatingUsername, setIsUpdatingUsername] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showGuestLimitModal, setShowGuestLimitModal] = useState(false);
     const [inputError, setInputError] = useState("");
@@ -69,15 +75,10 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
         const token = localStorage.getItem('token');
         const user = localStorage.getItem('user');
 
-
         try {
            // Assuming you stored the token in local storage
           if (token) {
-          const response = await axios.get('http://localhost:8000/api/todos', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          const response = await api.get('/api/todos');
           // Parse the username from JSON string
           const username = user ? JSON.parse(user) : '';
           SetShowUserName(username);
@@ -117,6 +118,101 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
         localStorage.removeItem('user');
         setTodos([]);
 
+    }
+
+    // Handle username editing
+    const handleEditUsername = () => {
+        setIsEditingUsername(true);
+        setEditedUsername(showUserName);
+        setUsernameError('');
+    }
+
+    const handleSaveUsername = async () => {
+        const trimmedUsername = editedUsername.trim();
+        
+        // Validation
+        if (!trimmedUsername) {
+            setUsernameError('Username cannot be empty');
+            return;
+        }
+
+        // Username validation: 3-20 characters, letters, numbers, underscores, and hyphens only
+        const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+        if (!usernameRegex.test(trimmedUsername)) {
+            setUsernameError('Username must be 3-20 characters and can only contain letters, numbers, underscores, and hyphens');
+            return;
+        }
+
+        // Don't update if username hasn't changed
+        if (trimmedUsername === showUserName) {
+            setIsEditingUsername(false);
+            setUsernameError('');
+            return;
+        }
+
+        setIsUpdatingUsername(true);
+        setUsernameError('');
+
+        try {
+            console.log('Updating username to:', trimmedUsername);
+            const response = await api.put('/auth/update-username', {
+                newUsername: trimmedUsername
+            });
+
+            console.log('Update username response:', response.data);
+
+            // Check response structure - backend returns { message, data: { username, email, token } }
+            const newUsername = response.data?.data?.username || response.data?.username;
+            const newToken = response.data?.data?.token || response.data?.token;
+
+            if (!newUsername || !newToken) {
+                console.error('Invalid response structure:', response.data);
+                setUsernameError('Invalid response from server');
+                return;
+            }
+
+            // Update token in localStorage (IMPORTANT: backend returns new token)
+            localStorage.setItem('token', newToken);
+            
+            // Update username in localStorage
+            localStorage.setItem('user', JSON.stringify(newUsername));
+            
+            // Update state
+            SetShowUserName(newUsername);
+            setIsEditingUsername(false);
+            
+            // Show success message briefly
+            setSendStatus('Username updated successfully!');
+            setSendStatusType('success');
+            setTimeout(() => setSendStatus(''), 3000);
+        } catch (error) {
+            console.error('Error updating username:', error);
+            console.error('Error response:', error?.response?.data);
+            
+            // Handle different error scenarios
+            if (error?.response?.status === 404) {
+                setUsernameError('Update username endpoint not found. Please check if the backend server is running and the endpoint is available.');
+            } else if (error?.response?.status === 401) {
+                setUsernameError('Authentication failed. Please login again.');
+            } else if (error?.response?.status === 400) {
+                const errorMessage = error?.response?.data?.message || 'Invalid username format';
+                setUsernameError(errorMessage);
+            } else if (error?.response?.data?.message) {
+                setUsernameError(error?.response?.data?.message);
+            } else if (error?.message) {
+                setUsernameError(`Network error: ${error.message}`);
+            } else {
+                setUsernameError('Failed to update username. Please try again.');
+            }
+        } finally {
+            setIsUpdatingUsername(false);
+        }
+    }
+
+    const handleCancelEditUsername = () => {
+        setIsEditingUsername(false);
+        setEditedUsername('');
+        setUsernameError('');
     }
 
     const handleAddTodo = async () => {
@@ -163,9 +259,7 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
             return;
         }
         try {
-            const response = await axios.post('http://localhost:8000/api/send-todos', {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.post('/api/send-todos', {});
             setSendStatus(response.data.message || "Todos sent to your email!");
             setSendStatusType("success");
         } catch (error) {
@@ -254,10 +348,71 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                                        </button>
                                     </div>
                                 ):(<>
-                                    <div className="flex space-x-2 flex-end py-1">
-                                        <div className="flex bg-primary-yellow dark:bg-dark-yellow border-none rounded-lg p-2 text-primary-dark dark:text-dark-text">
-                                            Hi, {showUserName}!
-                                        </div>
+                                    <div className="flex space-x-2 flex-end py-1 items-center">
+                                        {!isEditingUsername ? (
+                                            <div className="flex items-center bg-primary-yellow dark:bg-dark-yellow border-none rounded-lg p-2 text-primary-dark dark:text-dark-text gap-2">
+                                                <span>Hi, {showUserName}!</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleEditUsername}
+                                                    className="hover:bg-yellow-400 dark:hover:bg-yellow-500 rounded p-1 transition-colors"
+                                                    title="Edit username"
+                                                >
+                                                    ✏️
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-start bg-primary-yellow dark:bg-dark-yellow border-none rounded-lg p-2 gap-1">
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={editedUsername}
+                                                        onChange={(e) => {
+                                                            setEditedUsername(e.target.value);
+                                                            setUsernameError('');
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter' && !isUpdatingUsername) {
+                                                                handleSaveUsername();
+                                                            } else if (e.key === 'Escape') {
+                                                                handleCancelEditUsername();
+                                                            }
+                                                        }}
+                                                        maxLength={20}
+                                                        className="px-2 py-1 rounded border border-primary-accent dark:border-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent"
+                                                        autoFocus
+                                                        disabled={isUpdatingUsername}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleSaveUsername}
+                                                        disabled={isUpdatingUsername}
+                                                        className="hover:bg-green-400 dark:hover:bg-green-500 rounded p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                                        title="Save"
+                                                    >
+                                                        {isUpdatingUsername ? (
+                                                            <span className="animate-spin w-4 h-4 border-2 border-t-transparent border-primary-dark dark:border-dark-text rounded-full inline-block"></span>
+                                                        ) : (
+                                                            '✓'
+                                                        )}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleCancelEditUsername}
+                                                        disabled={isUpdatingUsername}
+                                                        className="hover:bg-red-400 dark:hover:bg-red-500 rounded p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        title="Cancel"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                                {usernameError && (
+                                                    <span className="text-xs text-primary-red dark:text-dark-red">
+                                                        {usernameError}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
                                         <button
                                         className="flex bg-primary-red dark:bg-dark-red text-white px-4 py-2 rounded hover:bg-red-400 dark:hover:bg-red-500"
                                         onClick={handleLogOut}>
@@ -273,15 +428,24 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                     {showlogin && (
                         <Login
                         className='flex justify-center items-center'
-                         onLogin={handleLogIn}
-                        onCancel={() => { setShowLogIn(false) }} />
+                        onLogin={handleLogIn}
+                        onCancel={() => { setShowLogIn(false) }}
+                        onForgotPassword={() => { setShowLogIn(false); setShowForgotPassword(true); }}
+                        onSignup={() => { setShowLogIn(false); setShowSignUp(true); }} />
                     )}
                     {/* Signup Modal */}
                     {showsignup && (
                     <Signup
                     onSignup={handleSignUp}
-                    onCancel={() => setShowSignUp(false)}/>
+                    onCancel={() => setShowSignUp(false)}
+                    onLogin={() => { setShowSignUp(false); setShowLogIn(true); }} />
             )}
+                    {/* Forgot Password Modal */}
+                    {showForgotPassword && (
+                        <ForgotPassword
+                        onCancel={() => setShowForgotPassword(false)}
+                        onLogin={() => { setShowForgotPassword(false); setShowLogIn(true); }} />
+                    )}
                     {todos.map((todo) => (
                         <div key={todo._id} className={`p-2 m-1 rounded shadow-lg flex flex-col transition-colors duration-200 ${todo.done ? 'bg-primary-green/70 dark:bg-dark-green/70' : 'bg-white dark:bg-dark-card'}`}>
                             <div className="flex justify-between items-center"> {/*div containing title and data/time */}

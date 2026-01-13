@@ -1,7 +1,7 @@
-import axios from "axios";
+import api from "../utils/api";
 import { useState } from "react"
 
-export const Signup = ({ onSignup, onCancel }) => {
+export const Signup = ({ onSignup, onCancel, onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -9,14 +9,28 @@ export const Signup = ({ onSignup, onCancel }) => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [step, setStep] = useState('signup'); // 'signup' or 'otp'
+    const [showPassword, setShowPassword] = useState(false);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Step 1: Request OTP
     const handleSignup = async (e) => {
         e.preventDefault();
         setError('');
         setSuccessMessage('');
+        
+        // Validation
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long');
+            return;
+        }
+        
         try {
-            await axios.post('http://localhost:8000/auth/signup', { username, email, password });
+            await api.post('/auth/signup', { username, email, password });
             setSuccessMessage('OTP sent to your email. Please enter it below to complete signup.');
             setStep('otp');
         } catch (error) {
@@ -31,7 +45,7 @@ export const Signup = ({ onSignup, onCancel }) => {
         setError('');
         setSuccessMessage('');
         try {
-            const response = await axios.post('http://localhost:8000/auth/verify-otp', { username, email, password, otp });
+            const response = await api.post('/auth/verify-otp', { email, otp });
             const token = response.data.data;
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(username));
@@ -60,7 +74,10 @@ export const Signup = ({ onSignup, onCancel }) => {
                         placeholder="Username"
                         required
                         value={username}
-                        onChange={e => setUsername(e.target.value)}
+                        onChange={e => {
+                            setUsername(e.target.value);
+                            setError('');
+                        }}
                     />
                     <input
                         className="w-full p-3 m-2 border border-primary-accent dark:border-dark-accent rounded-lg bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent"
@@ -68,16 +85,31 @@ export const Signup = ({ onSignup, onCancel }) => {
                         placeholder="Email"
                         required
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        onChange={e => {
+                            setEmail(e.target.value);
+                            setError('');
+                        }}
                     />
-                    <input
-                        className="w-full p-3 m-2 border border-primary-accent dark:border-dark-accent rounded-lg bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent"
-                        type="password"
-                        placeholder="Password"
-                        required
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                    />
+                    <div className="relative w-full">
+                        <input
+                            className="w-full p-3 m-2 border border-primary-accent dark:border-dark-accent rounded-lg bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent"
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Password (min 6 characters)"
+                            required
+                            value={password}
+                            onChange={e => {
+                                setPassword(e.target.value);
+                                setError('');
+                            }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-5 text-primary-dark dark:text-dark-text hover:text-primary-accent dark:hover:text-dark-accent"
+                        >
+                            {showPassword ? '👁️' : '👁️‍🗨️'}
+                        </button>
+                    </div>
                 </>}
                 {step === 'otp' && <>
                     <input
@@ -86,7 +118,10 @@ export const Signup = ({ onSignup, onCancel }) => {
                         placeholder="Enter OTP"
                         required
                         value={otp}
-                        onChange={e => setOtp(e.target.value)}
+                        onChange={e => {
+                            setOtp(e.target.value);
+                            setError('');
+                        }}
                     />
                 </>}
                 <div className="flex flex-row space-x-3 m-4 w-full">
@@ -97,6 +132,19 @@ export const Signup = ({ onSignup, onCancel }) => {
                         className="flex-1 bg-primary-red dark:bg-dark-red text-white p-3 border-none rounded-lg hover:bg-red-400 dark:hover:bg-red-500 transition-colors"
                         onClick={onCancel}>Cancel</button>
                 </div>
+                {/* Link to Login */}
+                {onLogin && step === 'signup' && (
+                    <div className="text-sm text-primary-dark dark:text-dark-text">
+                        Already have an account?{' '}
+                        <button
+                            type="button"
+                            onClick={onLogin}
+                            className="text-primary-teal dark:text-dark-teal hover:underline font-semibold"
+                        >
+                            Login
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     </>
