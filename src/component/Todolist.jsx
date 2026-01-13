@@ -273,90 +273,94 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
     };
 
     return (
-        <div className="p-1 flex flex-col space-x-2 h-screen md:flex-row bg-primary-bg dark:bg-dark-bg">{/*this is the main div*/}
+        <div className="min-h-screen flex flex-col md:flex-row bg-primary-bg dark:bg-dark-bg p-2 md:p-4 gap-2 md:gap-4">{/*this is the main div*/}
             {/* Toast message for email send status */}
             {sendStatus && (
-                <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-lg font-semibold text-lg transition-all duration-300
+                <div className={`fixed top-4 md:top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 md:px-6 md:py-3 rounded-lg shadow-lg font-semibold text-sm md:text-lg transition-all duration-300 max-w-[90%] md:max-w-none
                     ${sendStatusType === 'success' ? 'bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text' : 'bg-primary-red dark:bg-dark-red text-white'}`}
                 >
                     {sendStatus}
                 </div>
             )}
-            <div className="w-full bg-primary-card dark:bg-dark-card flex flex-col justify-start items-center rounded-lg md:w-3/10 shadow-lg">{/*Add you Todo and inputs*/}
-                <div className="font-serif font-medium m-2 p-2 bg-primary-accent dark:bg-dark-accent text-white rounded-lg shadow-lg">
-                        <h2>Add Your Todo</h2>
+            <div className="w-full md:w-3/10 bg-primary-card dark:bg-dark-card flex flex-col justify-start items-center rounded-lg shadow-lg mb-2 md:mb-0">{/*Add you Todo and inputs*/}
+                <div className="font-serif font-medium m-2 p-2 bg-primary-accent dark:bg-dark-accent text-white rounded-lg shadow-lg w-full text-center">
+                        <h2 className="text-lg md:text-xl">Add Your Todo</h2>
                 </div>
                 {/* Inline error message */}
-                {inputError && <div className="w-full text-center text-primary-red dark:text-dark-red font-semibold mb-2">{inputError}</div>}
-               <div className="flex flex-col items-center w-full p-2">{/*inputs*/}
-                        <input className="mb-2 p-2 border border-primary-accent dark:border-dark-accent rounded-lg w-full focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text" type="text" placeholder="Title" required
+                {inputError && <div className="w-full text-center text-primary-red dark:text-dark-red font-semibold mb-2 text-sm px-2">{inputError}</div>}
+               <div className="flex flex-col items-center w-full p-3 md:p-4">{/*inputs*/}
+                        <input className="mb-3 p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text" type="text" placeholder="Title" required
                          value={title}
                          onChange={handleInputChange(setTitle)}  />
-                        <textarea className="mb-2 p-2 border border-primary-accent dark:border-dark-accent rounded-lg w-full h-32 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="text" placeholder="Description" required 
+                        <textarea className="mb-3 p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full h-32 md:h-32 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text resize-none"  type="text" placeholder="Description" required 
                          value={description}
                          onChange={handleInputChange(setDescription)}   />
-                        <div className="flex flex-row space-x-1 m-1 w-full">
-                        <input className="mb-2 p-2 border border-primary-accent dark:border-dark-accent rounded-lg w-1/2 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="date"
+                        <div className="flex flex-col md:flex-row gap-2 md:gap-1 w-full mb-3 md:m-1">
+                        <input className="p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full md:w-1/2 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="date"
                         value={date}
                         onChange={handleInputChange(setDate)}/>
-                        <input className="mb-2 p-2 border border-primary-accent dark:border-dark-accent rounded-lg w-1/2 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="time"
+                        <input className="p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full md:w-1/2 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="time"
                           value={time}
                           onChange={handleInputChange(setTime)}  />
                         </div>
                         <div className="flex flex-row space-x-2 w-full justify-between mt-2">
-                        <button className="p-2 bg-primary-red dark:bg-dark-red text-white border-none shadow-md rounded-lg hover:bg-red-400 dark:hover:bg-red-500 w-1/2"  type="button"
+                        <button className="p-3 md:p-2 bg-primary-red dark:bg-dark-red text-white border-none shadow-md rounded-lg active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 w-1/2 text-base font-semibold transition-colors"  type="button"
                          onClick={clearInputs}   >
                         Clear
                         </button>
-                        <button className="p-2 bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text border-none shadow-md rounded-lg hover:bg-green-500 dark:hover:bg-green-600 w-1/2"  type="button"
+                        <button className="p-3 md:p-2 bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text border-none shadow-md rounded-lg active:bg-green-500 dark:active:bg-green-600 hover:bg-green-500 dark:hover:bg-green-600 w-1/2 text-base font-semibold transition-colors"  type="button"
                          onClick={handleAddTodo}   >
                         Add
                         </button>
                         </div>
                 </div>
             </div>
-            <div className="w-7/10 bg-primary-gray dark:bg-dark-gray rounded-lg flex flex-col w-full shadow-lg">{/*work todo and Todolist*/}
-                <div className="flex justify-between font-serif font-medium m-2 p-2 bg-primary-accent dark:bg-dark-accent text-white rounded-lg shadow-lg items-center">
-                            <h1 className="flex text-3xl p-2">Work To Do</h1>
-                            <div className="flex items-center space-x-3">
+            <div className="w-full md:w-7/10 bg-primary-gray dark:bg-dark-gray rounded-lg flex flex-col shadow-lg flex-1 min-h-0">{/*work todo and Todolist*/}
+                <div className="flex flex-col md:flex-row justify-between font-serif font-medium m-2 p-2 bg-primary-accent dark:bg-dark-accent text-white rounded-lg shadow-lg items-start md:items-center gap-2 md:gap-0">
+                            <h1 className="text-2xl md:text-3xl p-2">Work To Do</h1>
+                            <div className="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-start md:justify-end">
                                 {/* Dark mode toggle */}
                                 <button
                                     onClick={toggleDarkMode}
-                                    className="p-2 bg-primary-yellow dark:bg-dark-yellow text-primary-dark dark:text-dark-text rounded-lg hover:bg-yellow-400 dark:hover:bg-yellow-500 transition-colors"
+                                    className="p-2.5 md:p-2 bg-primary-yellow dark:bg-dark-yellow text-primary-dark dark:text-dark-text rounded-lg active:bg-yellow-400 dark:active:bg-yellow-500 hover:bg-yellow-400 dark:hover:bg-yellow-500 transition-colors text-lg md:text-base"
+                                    aria-label="Toggle dark mode"
                                 >
                                     {isDarkMode ? '☀️' : '🌙'}
                                 </button>
                                 {/* Email Todos Button */}
                                 <button
-                                    className="p-2 bg-primary-teal dark:bg-dark-teal text-primary-dark dark:text-dark-text rounded-lg hover:bg-teal-400 dark:hover:bg-teal-500 transition-colors border-none flex items-center min-w-[140px] justify-center"
+                                    className="p-2.5 md:p-2 bg-primary-teal dark:bg-dark-teal text-primary-dark dark:text-dark-text rounded-lg active:bg-teal-400 dark:active:bg-teal-500 hover:bg-teal-400 dark:hover:bg-teal-500 transition-colors border-none flex items-center justify-center text-sm md:text-base px-3 md:min-w-[140px]"
                                     onClick={handleSendTodosToEmail}
                                     disabled={sending}
                                 >
-                                    {sending && <span className="animate-spin mr-2 w-5 h-5 border-2 border-t-transparent border-primary-dark dark:border-dark-text rounded-full inline-block"></span>}
-                                    Email My Todos
+                                    {sending && <span className="animate-spin mr-2 w-4 h-4 md:w-5 md:h-5 border-2 border-t-transparent border-primary-dark dark:border-dark-text rounded-full inline-block"></span>}
+                                    <span className="hidden sm:inline">Email My Todos</span>
+                                    <span className="sm:hidden">📧 Email</span>
                                 </button>
                                 {!isLoggedIn ? (
-                                    <div className="flex space-x-3">
-                                        <button className="bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text px-4 py-2 border-none rounded hover:bg-green-400 dark:hover:bg-green-600"
+                                    <div className="flex gap-2 md:gap-3">
+                                        <button className="bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text px-4 py-2.5 md:py-2 border-none rounded active:bg-green-400 dark:active:bg-green-600 hover:bg-green-400 dark:hover:bg-green-600 text-sm md:text-base font-semibold transition-colors"
                                         onClick={() => { setShowLogIn(true) }}>
                                             Login
                                         </button>
                                         <button
-                                        className="bg-primary-teal dark:bg-dark-teal text-primary-dark dark:text-dark-text px-4 py-2 rounded hover:bg-teal-400 dark:hover:bg-teal-500"
+                                        className="bg-primary-teal dark:bg-dark-teal text-primary-dark dark:text-dark-text px-4 py-2.5 md:py-2 rounded active:bg-teal-400 dark:active:bg-teal-500 hover:bg-teal-400 dark:hover:bg-teal-500 text-sm md:text-base font-semibold transition-colors"
                                         onClick={() => { setShowSignUp(true) }}>
                                         Signup
                                        </button>
                                     </div>
                                 ):(<>
-                                    <div className="flex space-x-2 flex-end py-1 items-center">
+                                    <div className="flex flex-wrap gap-2 md:gap-2 items-center">
                                         {!isEditingUsername ? (
-                                            <div className="flex items-center bg-primary-yellow dark:bg-dark-yellow border-none rounded-lg p-2 text-primary-dark dark:text-dark-text gap-2">
-                                                <span>Hi, {showUserName}!</span>
+                                            <div className="flex items-center bg-primary-yellow dark:bg-dark-yellow border-none rounded-lg p-2 text-primary-dark dark:text-dark-text gap-2 text-sm md:text-base">
+                                                <span className="hidden sm:inline">Hi, {showUserName}!</span>
+                                                <span className="sm:hidden">Hi, {showUserName.length > 8 ? showUserName.substring(0, 8) + '...' : showUserName}!</span>
                                                 <button
                                                     type="button"
                                                     onClick={handleEditUsername}
-                                                    className="hover:bg-yellow-400 dark:hover:bg-yellow-500 rounded p-1 transition-colors"
+                                                    className="active:bg-yellow-400 dark:active:bg-yellow-500 hover:bg-yellow-400 dark:hover:bg-yellow-500 rounded p-1 transition-colors"
                                                     title="Edit username"
+                                                    aria-label="Edit username"
                                                 >
                                                     ✏️
                                                 </button>
@@ -379,7 +383,7 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                                                             }
                                                         }}
                                                         maxLength={20}
-                                                        className="px-2 py-1 rounded border border-primary-accent dark:border-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent"
+                                                        className="px-2 py-1.5 md:py-1 text-sm md:text-base rounded border border-primary-accent dark:border-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent w-32 md:w-auto"
                                                         autoFocus
                                                         disabled={isUpdatingUsername}
                                                     />
@@ -387,8 +391,9 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                                                         type="button"
                                                         onClick={handleSaveUsername}
                                                         disabled={isUpdatingUsername}
-                                                        className="hover:bg-green-400 dark:hover:bg-green-500 rounded p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                                                        className="active:bg-green-400 dark:active:bg-green-500 hover:bg-green-400 dark:hover:bg-green-500 rounded p-1.5 md:p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                                                         title="Save"
+                                                        aria-label="Save"
                                                     >
                                                         {isUpdatingUsername ? (
                                                             <span className="animate-spin w-4 h-4 border-2 border-t-transparent border-primary-dark dark:border-dark-text rounded-full inline-block"></span>
@@ -400,8 +405,9 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                                                         type="button"
                                                         onClick={handleCancelEditUsername}
                                                         disabled={isUpdatingUsername}
-                                                        className="hover:bg-red-400 dark:hover:bg-red-500 rounded p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 rounded p-1.5 md:p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                         title="Cancel"
+                                                        aria-label="Cancel"
                                                     >
                                                         ✕
                                                     </button>
@@ -414,7 +420,7 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                                             </div>
                                         )}
                                         <button
-                                        className="flex bg-primary-red dark:bg-dark-red text-white px-4 py-2 rounded hover:bg-red-400 dark:hover:bg-red-500"
+                                        className="bg-primary-red dark:bg-dark-red text-white px-4 py-2.5 md:py-2 rounded active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 text-sm md:text-base font-semibold transition-colors"
                                         onClick={handleLogOut}>
                                         Logout
                                         </button>
@@ -423,7 +429,7 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                                 )}
                             </div>
                 </div>
-                <div className="overflow-y-auto font-serif font-medium m-2 p-2 bg-primary-card dark:bg-dark-card rounded-lg shadow-lg h-full">
+                <div className="overflow-y-auto font-serif font-medium m-2 p-2 bg-primary-card dark:bg-dark-card rounded-lg shadow-lg flex-1 min-h-0">
                     {/* login Model */}
                     {showlogin && (
                         <Login
@@ -447,20 +453,20 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                         onLogin={() => { setShowForgotPassword(false); setShowLogIn(true); }} />
                     )}
                     {todos.map((todo) => (
-                        <div key={todo._id} className={`p-2 m-1 rounded shadow-lg flex flex-col transition-colors duration-200 ${todo.done ? 'bg-primary-green/70 dark:bg-dark-green/70' : 'bg-white dark:bg-dark-card'}`}>
-                            <div className="flex justify-between items-center"> {/*div containing title and data/time */}
-                            <div className="py-0.5 border-2 border-primary-accent dark:border-dark-accent rounded-lg p-1 text-primary-dark dark:text-dark-text bg-primary-gray dark:bg-dark-gray">{todo.title}</div>
-                            <div className="flex space-x-2">
-                            <div className="p-0.5 border-2 border-primary-accent dark:border-dark-accent rounded bg-primary-bg dark:bg-dark-bg text-primary-dark dark:text-dark-text">{todo.date}</div>
-                            <div className="p-0.5 border-2 border-primary-accent dark:border-dark-accent rounded bg-primary-bg dark:bg-dark-bg text-primary-dark dark:text-dark-text">{todo.time}</div>
+                        <div key={todo._id} className={`p-3 md:p-2 m-1 md:m-2 rounded-lg shadow-lg flex flex-col transition-colors duration-200 ${todo.done ? 'bg-primary-green/70 dark:bg-dark-green/70' : 'bg-white dark:bg-dark-card'}`}>
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-2"> {/*div containing title and data/time */}
+                            <div className="py-1.5 md:py-0.5 border-2 border-primary-accent dark:border-dark-accent rounded-lg px-2 md:p-1 text-sm md:text-base font-semibold text-primary-dark dark:text-dark-text bg-primary-gray dark:bg-dark-gray break-words flex-1">{todo.title}</div>
+                            <div className="flex gap-2 md:space-x-2">
+                            <div className="py-1 px-2 md:p-0.5 border-2 border-primary-accent dark:border-dark-accent rounded bg-primary-bg dark:bg-dark-bg text-primary-dark dark:text-dark-text text-xs md:text-sm whitespace-nowrap">{todo.date}</div>
+                            <div className="py-1 px-2 md:p-0.5 border-2 border-primary-accent dark:border-dark-accent rounded bg-primary-bg dark:bg-dark-bg text-primary-dark dark:text-dark-text text-xs md:text-sm whitespace-nowrap">{todo.time}</div>
                             </div>
                             </div>
-                            <div className="p-2 flex justify-between rounded-lg items-center">
-                                <span className="text-primary-dark dark:text-dark-text">{todo.description}</span>
-                                <div className="flex flex-row space-x-1">
-                                <button className="flex p-0.5 bg-primary-green dark:bg-dark-green text-white shadow-md rounded-lg hover:bg-green-500 dark:hover:bg-green-600 self-end px-3" onClick={() => markAsDone(todo._id)}>
-                                    Done</button>
-                                <button className="flex p-0.5 bg-primary-red dark:bg-dark-red text-white shadow-md rounded-lg hover:bg-red-400 dark:hover:bg-red-500 self-end px-3" onClick={() => deleteTodo(todo._id)}>
+                            <div className="p-2 flex flex-col md:flex-row justify-between rounded-lg items-start md:items-center gap-3 md:gap-2">
+                                <span className="text-primary-dark dark:text-dark-text text-sm md:text-base flex-1 break-words">{todo.description}</span>
+                                <div className="flex flex-row gap-2 md:space-x-1 w-full md:w-auto">
+                                <button className="flex-1 md:flex-none p-2.5 md:p-0.5 bg-primary-green dark:bg-dark-green text-white shadow-md rounded-lg active:bg-green-500 dark:active:bg-green-600 hover:bg-green-500 dark:hover:bg-green-600 px-4 md:px-3 text-sm md:text-base font-semibold transition-colors" onClick={() => markAsDone(todo._id)}>
+                                    {todo.done ? '✓ Done' : 'Done'}</button>
+                                <button className="flex-1 md:flex-none p-2.5 md:p-0.5 bg-primary-red dark:bg-dark-red text-white shadow-md rounded-lg active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 px-4 md:px-3 text-sm md:text-base font-semibold transition-colors" onClick={() => deleteTodo(todo._id)}>
                                     Delete</button>
                                 </div>
                             </div>
