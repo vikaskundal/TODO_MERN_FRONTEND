@@ -295,13 +295,31 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                         <textarea className="mb-3 p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full h-32 md:h-32 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text resize-none"  type="text" placeholder="Description" required 
                          value={description}
                          onChange={handleInputChange(setDescription)}   />
-                        <div className="flex flex-col md:flex-row gap-2 md:gap-1 w-full mb-3 md:m-1">
-                        <input className="p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full md:w-1/2 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="date"
-                        value={date}
-                        onChange={handleInputChange(setDate)}/>
-                        <input className="p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg w-full md:w-1/2 focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-primary-dark dark:text-dark-text"  type="time"
-                          value={time}
-                          onChange={handleInputChange(setTime)}  />
+                        <div className="flex flex-row gap-2 md:gap-1 w-full mb-3 md:m-1 justify-center">
+                        <div className="relative flex-1 md:flex-none md:w-1/2 max-w-[48%] md:max-w-none">
+                            <input 
+                                className="w-full p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-transparent focus:text-primary-dark dark:focus:text-dark-text [&:not(:placeholder-shown)]:text-primary-dark dark:[&:not(:placeholder-shown)]:text-dark-text"  
+                                type="date"
+                                value={date}
+                                onChange={handleInputChange(setDate)}
+                                required
+                            />
+                            {!date && (
+                                <span className="absolute left-3 top-3.5 md:top-2.5 text-base md:text-sm text-gray-400 dark:text-gray-500 pointer-events-none select-none">Date</span>
+                            )}
+                        </div>
+                        <div className="relative flex-1 md:flex-none md:w-1/2 max-w-[48%] md:max-w-none">
+                            <input 
+                                className="w-full p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-transparent focus:text-primary-dark dark:focus:text-dark-text [&:not(:placeholder-shown)]:text-primary-dark dark:[&:not(:placeholder-shown)]:text-dark-text"  
+                                type="time"
+                                value={time}
+                                onChange={handleInputChange(setTime)}
+                                required
+                            />
+                            {!time && (
+                                <span className="absolute left-3 top-3.5 md:top-2.5 text-base md:text-sm text-gray-400 dark:text-gray-500 pointer-events-none select-none">Time</span>
+                            )}
+                        </div>
                         </div>
                         <div className="flex flex-row space-x-2 w-full justify-between mt-2">
                         <button className="p-3 md:p-2 bg-primary-red dark:bg-dark-red text-white border-none shadow-md rounded-lg active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 w-1/2 text-base font-semibold transition-colors"  type="button"

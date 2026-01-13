@@ -11,3 +11,20 @@
       box-shadow: 0 4px 20px rgba(135, 206, 235, 0.5); /* Sky blue glow */
     }
   }
+
+/* Hide default date/time input formatting when empty */
+input[type="date"]:invalid::-webkit-datetime-edit,
+input[type="time"]:invalid::-webkit-datetime-edit {
+  color: transparent;
+}
+
+input[type="date"]:focus::-webkit-datetime-edit,
+input[type="time"]:focus::-webkit-datetime-edit {
+  color: inherit;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  cursor: pointer;
+}
