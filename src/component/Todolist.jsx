@@ -296,28 +296,28 @@ export const TodoList = ({ todos, addTodoToDS, deleteTodo, markAsDone, setTodos 
                          value={description}
                          onChange={handleInputChange(setDescription)}   />
                         <div className="flex flex-row gap-2 md:gap-1 w-full mb-3 md:m-1 justify-center">
-                        <div className="relative flex-1 md:flex-none md:w-1/2 max-w-[48%] md:max-w-none">
+                        <div className="relative md:flex-none md:w-1/2 w-[45%] max-w-[150px] md:max-w-none">
                             <input 
-                                className="w-full p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-transparent focus:text-primary-dark dark:focus:text-dark-text [&:not(:placeholder-shown)]:text-primary-dark dark:[&:not(:placeholder-shown)]:text-dark-text"  
+                                className="w-full p-2.5 md:p-2 text-sm md:text-base border border-primary-accent dark:border-dark-accent rounded-lg focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-transparent focus:text-primary-dark dark:focus:text-dark-text [&:not(:placeholder-shown)]:text-primary-dark dark:[&:not(:placeholder-shown)]:text-dark-text"  
                                 type="date"
                                 value={date}
                                 onChange={handleInputChange(setDate)}
                                 required
                             />
                             {!date && (
-                                <span className="absolute left-3 top-3.5 md:top-2.5 text-base md:text-sm text-gray-400 dark:text-gray-500 pointer-events-none select-none">Date</span>
+                                <span className="absolute left-2.5 top-2.5 md:top-2.5 text-sm md:text-sm text-gray-400 dark:text-gray-500 pointer-events-none select-none">Date</span>
                             )}
                         </div>
-                        <div className="relative flex-1 md:flex-none md:w-1/2 max-w-[48%] md:max-w-none">
+                        <div className="relative md:flex-none md:w-1/2 w-[45%] max-w-[150px] md:max-w-none">
                             <input 
-                                className="w-full p-3 md:p-2 text-base border border-primary-accent dark:border-dark-accent rounded-lg focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-transparent focus:text-primary-dark dark:focus:text-dark-text [&:not(:placeholder-shown)]:text-primary-dark dark:[&:not(:placeholder-shown)]:text-dark-text"  
+                                className="w-full p-2.5 md:p-2 text-sm md:text-base border border-primary-accent dark:border-dark-accent rounded-lg focus:ring-2 focus:ring-primary-accent dark:focus:ring-dark-accent bg-white dark:bg-dark-gray text-transparent focus:text-primary-dark dark:focus:text-dark-text [&:not(:placeholder-shown)]:text-primary-dark dark:[&:not(:placeholder-shown)]:text-dark-text"  
                                 type="time"
                                 value={time}
                                 onChange={handleInputChange(setTime)}
                                 required
                             />
                             {!time && (
-                                <span className="absolute left-3 top-3.5 md:top-2.5 text-base md:text-sm text-gray-400 dark:text-gray-500 pointer-events-none select-none">Time</span>
+                                <span className="absolute left-2.5 top-2.5 md:top-2.5 text-sm md:text-sm text-gray-400 dark:text-gray-500 pointer-events-none select-none">Time</span>
                             )}
                         </div>
                         </div>
