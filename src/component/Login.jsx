@@ -6,6 +6,7 @@ export const Login = ({ onLogin, onCancel, onForgotPassword, onSignup }) => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,6 +17,7 @@ export const Login = ({ onLogin, onCancel, onForgotPassword, onSignup }) => {
             setError('Please enter a valid email address');
             return;
         }
+        setLoading(true);
         try {
             const response = await api.post('/auth/login', { email, password });
             const token = response.data.data;
@@ -24,8 +26,19 @@ export const Login = ({ onLogin, onCancel, onForgotPassword, onSignup }) => {
             localStorage.setItem('user', JSON.stringify(email));
             onLogin();
         } catch (error) {
-            setError(error?.response?.data?.message || 'Invalid email or password, try again');
-            console.log('error while login', error);
+            console.error('Login error:', error);
+            console.error('Error response:', error?.response);
+            if (error?.code === 'ERR_NETWORK' || error?.message?.includes('Network Error')) {
+                setError('Network error. Please check if the backend server is running and accessible.');
+            } else if (error?.response?.status === 401) {
+                setError(error?.response?.data?.message || 'Invalid email or password, try again');
+            } else if (error?.response?.status === 404) {
+                setError('Login endpoint not found. Please check the backend server.');
+            } else {
+                setError(error?.response?.data?.message || 'Login failed. Please try again.');
+            }
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -85,12 +98,23 @@ export const Login = ({ onLogin, onCancel, onForgotPassword, onSignup }) => {
                 )}
                 <div className="flex flex-row gap-3 md:space-x-3 mt-2 mb-4 w-full">
                     <button
-                        className="flex-1 bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text p-3 border-none rounded-lg active:bg-green-500 dark:active:bg-green-600 hover:bg-green-500 dark:hover:bg-green-600 transition-colors text-base font-semibold"
+                        className="flex-1 bg-primary-green dark:bg-dark-green text-primary-dark dark:text-dark-text p-3 border-none rounded-lg active:bg-green-500 dark:active:bg-green-600 hover:bg-green-500 dark:hover:bg-green-600 transition-colors text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                         type='submit'
-                    >Login</button>
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <span className="animate-spin mr-2 w-4 h-4 border-2 border-t-transparent border-primary-dark dark:border-dark-text rounded-full inline-block"></span>
+                                Logging in...
+                            </>
+                        ) : (
+                            'Login'
+                        )}
+                    </button>
                     <button
-                        className="flex-1 bg-primary-red dark:bg-dark-red text-white p-3 border-none rounded-lg active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 transition-colors text-base font-semibold"
+                        className="flex-1 bg-primary-red dark:bg-dark-red text-white p-3 border-none rounded-lg active:bg-red-400 dark:active:bg-red-500 hover:bg-red-400 dark:hover:bg-red-500 transition-colors text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={onCancel}
+                        disabled={loading}
                     > Cancel</button>
                 </div>
                 {/* Link to Signup */}
