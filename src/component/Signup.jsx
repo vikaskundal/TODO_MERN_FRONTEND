@@ -46,9 +46,42 @@ export const Signup = ({ onSignup, onCancel, onLogin }) => {
         setSuccessMessage('');
         try {
             const response = await api.post('/auth/verify-otp', { email, otp });
-            const token = response.data.data;
+            console.log('OTP verification response:', response.data);
+            
+            // Handle different possible response structures
+            const token = response.data?.data?.token || 
+                         response.data?.data || 
+                         response.data?.token || 
+                         response.data?.accessToken ||
+                         response.data?.access_token ||
+                         response.token;
+            
+            // Validate token exists
+            if (!token) {
+                console.error('Token not found in response:', response.data);
+                setError('Signup successful but token not received. Please try again.');
+                return;
+            }
+            
+            // Validate token is a string
+            if (typeof token !== 'string' || token.trim() === '') {
+                console.error('Invalid token format:', token);
+                setError('Invalid token received. Please try again.');
+                return;
+            }
+            
+            // Set the token in the local storage
             localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(username));
+            console.log('Token stored in localStorage:', token.substring(0, 20) + '...');
+            
+            // Store username from response or use the form username
+            const user = response.data?.data?.username || 
+                        response.data?.data?.user?.username ||
+                        response.data?.username ||
+                        response.data?.user ||
+                        username;
+            localStorage.setItem('user', typeof user === 'string' ? JSON.stringify(user) : JSON.stringify(user));
+            
             setSuccessMessage('Signup successful!');
             onSignup();
         } catch (error) {
